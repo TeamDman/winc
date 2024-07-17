@@ -2,7 +2,7 @@ use image::RgbaImage;
 #[cfg(target_arch = "x86")]
 use std::arch::x86::_mm_shuffle_epi8;
 use std::mem;
-use std::sync::Arc;
+use std::rc::Rc;
 use windows::core::Result;
 use windows::Win32::Foundation::RECT;
 use windows::Win32::Foundation::S_FALSE;
@@ -39,7 +39,7 @@ use crate::prelude::Monitor;
 /////////////////////////////
 
 pub struct MonitorRegionCapturer {
-    pub monitor: Arc<Monitor>,
+    pub monitor: Rc<Monitor>,
     pub capture_region: RECT,
     device_context: HDC,
     bitmap: HBITMAP,
@@ -51,14 +51,14 @@ pub fn get_full_monitor_capturers() -> Result<Vec<MonitorRegionCapturer>> {
 
     for monitor in monitors {
         let region = monitor.info.rect;
-        let capturer = get_monitor_capturer(Arc::new(monitor), region);
+        let capturer = get_monitor_capturer(Rc::new(monitor), region);
         capturers.push(capturer);
     }
 
     Ok(capturers)
 }
 
-pub fn get_monitor_capturer(monitor: Arc<Monitor>, capture_region: RECT) -> MonitorRegionCapturer {
+pub fn get_monitor_capturer(monitor: Rc<Monitor>, capture_region: RECT) -> MonitorRegionCapturer {
     let capture_device_context = unsafe { CreateCompatibleDC(monitor.device_context) };
     let bitmap = unsafe {
         CreateCompatibleBitmap(

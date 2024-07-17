@@ -1,5 +1,3 @@
-#[cfg(target_arch = "x86")]
-use std::arch::x86::_mm_shuffle_epi8;
 use std::ptr;
 use widestring::U16CString;
 use windows::core::Result;
@@ -11,9 +9,6 @@ use windows::Win32::Graphics::Gdi::HDC;
 use crate::prelude::get_monitor_infos;
 use crate::prelude::MonitorInfo;
 
-//////////////////
-/// GET MONITORS
-//////////////////
 pub struct Monitor {
     pub info: MonitorInfo,
     pub device_context: HDC,

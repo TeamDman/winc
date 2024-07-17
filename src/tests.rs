@@ -1,9 +1,14 @@
-
 #[cfg(test)]
 mod tests {
-    use std::sync::Arc;
-
-    use crate::{monitor_region_capturer::{get_full_monitor_capturers, get_monitor_capturer}, prelude::{get_all_monitors, get_monitor_infos}};
+    use crate::monitor_region_capturer::get_full_monitor_capturers;
+    use crate::monitor_region_capturer::get_monitor_capturer;
+    use crate::prelude::get_all_monitors;
+    use crate::prelude::get_monitor_infos;
+    use crate::prelude::FromCorners;
+    use crate::prelude::HasTopLeft;
+    use crate::prelude::Translatable;
+    use std::rc::Rc;
+    use windows::Win32::Foundation::RECT;
 
     #[test]
     fn names() {
@@ -32,9 +37,9 @@ mod tests {
 
         for monitor in monitors {
             let p0 = monitor.info.rect.top_left();
-            let p1 = p0 + IVec2::new(100, 100);
-            let region = IRect::from_corners(p0, p1);
-            let capturer = get_monitor_capturer(Arc::new(monitor), region);
+            let p1 = p0.translate(100, 100);
+            let region = RECT::from_corners(p0, p1);
+            let capturer = get_monitor_capturer(Rc::new(monitor), region);
             capturers.push(capturer);
         }
         std::fs::create_dir_all("target/capture").unwrap();
@@ -58,7 +63,7 @@ mod tests {
                 let (mut tot_r, mut tot_g, mut tot_b) = (0, 0, 0);
 
                 for pixel in capture.enumerate_pixels() {
-                    let image::Rgba([r, g, b, _]) = pixel.2; // Destructure the Rgba struct
+                    let image::Rgba([r, g, b, _]) = pixel.2;
                     tot_r += *r as u64;
                     tot_g += *g as u64;
                     tot_b += *b as u64;
@@ -71,12 +76,11 @@ mod tests {
                 );
             });
             print!("\n");
-            std::thread::sleep(std::time::Duration::from_millis(100));
         }
     }
 
     #[test]
-    fn screenshot_speed() {
+    fn fps() {
         let capturers = get_full_monitor_capturers().unwrap();
         let mut durations = Vec::new();
         for _ in 0..100 {
@@ -86,9 +90,10 @@ mod tests {
                 let duration = start.elapsed();
                 durations.push(duration.as_millis());
             });
-            std::thread::sleep(std::time::Duration::from_millis(1));
         }
         let avg = durations.iter().sum::<u128>() / durations.len() as u128;
-        println!("avg: {:?}ms", avg);
+        let fps = 1000 / avg;
+        println!("avg: {}ms ({} fps)", avg, fps);
+        assert!(fps > 10);
     }
 }

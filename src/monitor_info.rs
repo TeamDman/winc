@@ -1,5 +1,3 @@
-
-
 #[cfg(target_arch = "x86")]
 use std::arch::x86::_mm_shuffle_epi8;
 use std::mem;
