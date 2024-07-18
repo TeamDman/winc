@@ -2,6 +2,40 @@
 
 A crate for windows screen capture.
 
+## Usage
+
+See [tests.rs](./src/tests.rs) for examples.
+
+```rust
+#[test]
+fn region_screenshots() {
+    let monitors = get_all_monitors().unwrap();
+    let mut capturers = Vec::new();
+
+    for monitor in monitors {
+        let p0 = monitor.info.rect.top_left();
+        let p1 = p0.translate(100, 100);
+        let region = RECT::from_corners(p0, p1).translate(100, 100);
+        let capturer = get_monitor_capturer(Rc::new(monitor), region);
+        capturers.push(capturer);
+    }
+    std::fs::create_dir_all("target/capture").unwrap();
+
+    let mut images = Vec::new();
+    for capturer in capturers.iter() {
+        // capture
+        let capture = capturer.capture(&mut Metrics::None).unwrap();
+
+        // save image
+        let mon_name_good = capturer.monitor.info.name.replace(r"\\.\", "");
+        let path = format!("target/capture/region-{}.png", mon_name_good);
+        capture.save(path).unwrap();
+        images.push(capture);
+    }
+
+    assert_no_transparency(&images);
+}
+```
 
 ## Attributions
 

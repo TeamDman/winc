@@ -5,3 +5,4 @@
 - `id` (`fxhash`) feature flag, enabled by default
 - `metrics` (`indexmap`) feature flag, disabled by default
 - get primary monitor method
+- make tests use pathbuf
