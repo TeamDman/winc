@@ -27,7 +27,7 @@ impl Metrics {
     }
     pub fn begin(&mut self, name: &str) {
         match self {
-            Metrics::None => todo!(),
+            Metrics::None => {},
             Metrics::Some { ongoing, .. } => {
                 ongoing.insert(name.to_string(), Instant::now());
             }
@@ -36,7 +36,7 @@ impl Metrics {
 
     pub fn end(&mut self, name: &str) {
         match self {
-            Metrics::None => todo!(),
+            Metrics::None => {},
             Metrics::Some { ongoing, completed } => {
                 if let Some(start_time) = ongoing.shift_remove(name) {
                     let duration = start_time.elapsed();
@@ -78,7 +78,7 @@ mod tests {
 
     #[test]
     fn test_metrics_tracking() {
-        let mut metrics = Metrics::default();
+        let mut metrics = Metrics::new();
 
         metrics.begin("z first");
         std::thread::sleep(Duration::from_millis(10));
