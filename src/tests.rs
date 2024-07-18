@@ -6,6 +6,7 @@ mod tests {
     use crate::prelude::get_monitor_infos;
     use crate::prelude::FromCorners;
     use crate::prelude::HasTopLeft;
+    use crate::prelude::Metrics;
     use crate::prelude::Translatable;
     use std::rc::Rc;
     use windows::Win32::Foundation::RECT;
@@ -23,7 +24,23 @@ mod tests {
         std::fs::create_dir_all("target/capture").unwrap();
 
         capturers.iter().for_each(|capturer| {
-            let capture = capturer.capture(&mut None).unwrap();
+            let capture = capturer.capture(&mut Metrics::None).unwrap();
+            let mon_name_good = capturer.monitor.info.name.replace(r"\\.\", "");
+            let path = format!("target/capture/full-{}.png", mon_name_good);
+            capture.save(path).unwrap();
+        });
+    }
+
+    #[test]
+    fn full_screenshots_with_metrics() {
+        let capturers = get_full_monitor_capturers().unwrap();
+        std::fs::create_dir_all("target/capture").unwrap();
+
+        capturers.iter().for_each(|capturer| {
+            let mut metrics = Metrics::new();
+            let capture = capturer.capture(&mut metrics).unwrap();
+            println!("Metrics ({}): {}", capturer.monitor.info.name, metrics.report());
+
             let mon_name_good = capturer.monitor.info.name.replace(r"\\.\", "");
             let path = format!("target/capture/full-{}.png", mon_name_good);
             capture.save(path).unwrap();
@@ -45,7 +62,7 @@ mod tests {
         std::fs::create_dir_all("target/capture").unwrap();
 
         capturers.iter().for_each(|capturer| {
-            let capture = capturer.capture(&mut None).unwrap();
+            let capture = capturer.capture(&mut Metrics::None).unwrap();
             let mon_name_good = capturer.monitor.info.name.replace(r"\\.\", "");
             let path = format!("target/capture/region-{}.png", mon_name_good);
             capture.save(path).unwrap();
@@ -59,7 +76,7 @@ mod tests {
 
         for _ in 0..100 {
             capturers.iter().for_each(|capturer| {
-                let capture = capturer.capture(&mut None).unwrap();
+                let capture = capturer.capture(&mut Metrics::None).unwrap();
                 let (mut tot_r, mut tot_g, mut tot_b) = (0, 0, 0);
 
                 for pixel in capture.enumerate_pixels() {
@@ -86,7 +103,7 @@ mod tests {
         for _ in 0..100 {
             capturers.iter().for_each(|capturer| {
                 let start = std::time::Instant::now();
-                let _ = capturer.capture(&mut None).unwrap();
+                let _ = capturer.capture(&mut Metrics::None).unwrap();
                 let duration = start.elapsed();
                 durations.push(duration.as_millis());
             });
