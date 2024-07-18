@@ -2,11 +2,6 @@
 
 A crate for windows screen capture.
 
-## TODO
-
-- `image` feature flag
-- `id` (`fxhash`) feature flag
-- `metrics` (`indexmap`) feature flag
 
 ## Attributions
 
