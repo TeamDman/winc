@@ -4,7 +4,7 @@ Pronounced "wink"
 
 [![Crates.io](https://img.shields.io/crates/v/winc)](https://crates.io/crates/winc)
 [![Docs.rs](https://docs.rs/winc/badge.svg)](https://docs.rs/winc)
-[![License](https://img.shields.io/crates/l/winc)]
+![License](https://img.shields.io/crates/l/winc)
 
 A crate for windows screen capture.
 
