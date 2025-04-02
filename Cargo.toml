@@ -6,7 +6,7 @@ authors = ["TeamDman"]
 description = "Windows screen capture"
 license = "MPL-2.0"
 repository = "https://github.com/TeamDman/winc"
-homepaghe = "https://github.com/TeamDman/winc"
+homepage = "https://github.com/TeamDman/winc"
 readme = "README.md"
 keywords = ["winc", "windows", "screen-capture"]
 
