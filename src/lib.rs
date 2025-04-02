@@ -5,6 +5,7 @@ mod monitor_region_capturer;
 mod rect_extensions;
 mod shuffle;
 mod tests;
+mod direct;
 
 pub mod prelude {
     pub use crate::metrics::*;
